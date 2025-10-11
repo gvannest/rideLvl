@@ -1,0 +1,229 @@
+/**
+ * VideoControls Styles
+ *
+ * Modern UI-friendly video controls with glassmorphism design.
+ * Touch-optimized with minimum 44x44px tap targets.
+ */
+
+.controlsContainer {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Progress Bar - Enhanced Modern Design */
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 48px; /* Large touch target */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 16px 0;
+  margin-bottom: 16px;
+}
+
+.progressBar::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.progressFilled {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  transform: translateY(-50%);
+  border-radius: 3px;
+  z-index: 1;
+  transition: width 0.1s linear;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+}
+
+.progressHandle {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.progressBar:hover .progressHandle {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.progressBar:active .progressHandle {
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Control Buttons - Modern Hover States */
+.controlButtons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controlButton {
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  padding: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.controlButton:active {
+  background: rgba(16, 185, 129, 0.3);
+  transform: scale(0.95);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.controlButton:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 3px;
+}
+
+/* Time Display - Enhanced Visibility */
+.timeDisplay {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: auto;
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+}
+
+/* Volume Control */
+.volumeControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.volumeSlider {
+  width: 80px;
+  height: 48px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.volumeSlider::-webkit-slider-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.volumeSlider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Gesture Hints */
+.gestureHints {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  max-width: 300px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.gestureHints.show {
+  opacity: 1;
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .controlsContainer {
+    padding: 16px 12px 12px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .progressBar {
+    margin-bottom: 12px;
+  }
+
+  .controlButtons {
+    gap: 8px;
+  }
+
+  .controlButton {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+  }
+
+  .timeDisplay {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}

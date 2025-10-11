@@ -11,6 +11,8 @@ export function usePoseDetection() {
   const rafRef = useRef(null);
   const [leanAngle, setLeanAngle] = useState(null);
   const [slopeAngle, setSlopeAngle] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   // Draw pose landmarks and connections on canvas
   const drawPose = useCallback((ctx, width, height, landmarks) => {
@@ -86,7 +88,7 @@ export function usePoseDetection() {
   }, []);
 
   // Main detection loop
-  const runDetection = useCallback(async (landmarker, video, canvas) => {
+  const runDetection = useCallback((landmarker, video, canvas) => {
     const ctx = canvas.getContext('2d');
     if (!ctx || !video) return;
 
@@ -103,20 +105,6 @@ export function usePoseDetection() {
       const worldLandmarks = result?.worldLandmarks?.[0]; // 3D coordinates!
 
       if (landmarks && landmarks.length > 0) {
-        console.log('🎯 Pose detected! Landmark count:', landmarks.length);
-
-        // Check if we have 3D data
-        if (worldLandmarks) {
-          console.log('📊 3D World landmarks available! Could use for true 3D angles');
-        }
-
-        // Log visibility of key landmarks for debugging
-        const keyLandmarks = [11, 12, 23, 24]; // Shoulders and hips
-        const visibilities = keyLandmarks.map(i =>
-          `L${i}: ${landmarks[i]?.visibility?.toFixed(2) || 'N/A'}`
-        ).join(', ');
-        console.log('Key landmark visibilities:', visibilities);
-
         // Calculate torso vector and angles
         const torso = torsoVector(landmarks);
         if (torso) {
@@ -131,11 +119,64 @@ export function usePoseDetection() {
           }
         }
 
-        // Draw pose on canvas
-        drawPose(ctx, canvas.width, canvas.height, landmarks);
-        console.log('✅ Skeleton drawn on canvas');
+        // Draw pose on canvas - inline to avoid dependency issues
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const connections = getPoseConnections();
+
+        // Draw connections (skeleton lines)
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (const [a, b] of connections) {
+          const pointA = landmarks[a];
+          const pointB = landmarks[b];
+
+          if (!pointA || !pointB) continue;
+          if (pointA.visibility < 0.3 || pointB.visibility < 0.3) continue;
+
+          ctx.beginPath();
+
+          // Different colors for different body parts
+          if (a <= 10 && b <= 10) {
+            ctx.strokeStyle = 'rgba(100, 200, 255, 0.8)';
+          } else if ((a >= 11 && a <= 16) || (b >= 11 && b <= 16)) {
+            ctx.strokeStyle = 'rgba(0, 255, 100, 0.8)';
+          } else if ((a >= 23 && a <= 32) || (b >= 23 && b <= 32)) {
+            ctx.strokeStyle = 'rgba(255, 150, 0, 0.8)';
+          } else {
+            ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
+          }
+
+          ctx.moveTo(pointA.x * canvas.width, pointA.y * canvas.height);
+          ctx.lineTo(pointB.x * canvas.width, pointB.y * canvas.height);
+          ctx.stroke();
+        }
+
+        // Draw landmarks (joints)
+        for (let i = 0; i < landmarks.length; i++) {
+          const point = landmarks[i];
+          if (point.visibility < 0.3) continue;
+
+          ctx.beginPath();
+
+          if (i <= 10) {
+            ctx.fillStyle = 'rgba(100, 200, 255, 1)';
+          } else if (i >= 11 && i <= 16) {
+            ctx.fillStyle = 'rgba(0, 255, 100, 1)';
+          } else if (i >= 23 && i <= 32) {
+            ctx.fillStyle = 'rgba(255, 150, 0, 1)';
+          } else {
+            ctx.fillStyle = 'rgba(255, 50, 50, 1)';
+          }
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.lineWidth = 2;
+          ctx.arc(point.x * canvas.width, point.y * canvas.height, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
       } else {
-        console.log('⚠️ No pose detected in this frame');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     } catch (error) {
@@ -146,10 +187,35 @@ export function usePoseDetection() {
     rafRef.current = requestAnimationFrame(() =>
       runDetection(landmarker, video, canvas)
     );
-  }, [drawPose]);
+  }, []);
 
-  // Start detection
+  // Initialize MediaPipe (call this early, before video plays)
+  const initializeMediaPipe = useCallback(async () => {
+    if (isReady || isInitializing) return;
+
+    try {
+      setIsInitializing(true);
+      console.log('🚀 Initializing MediaPipe landmarker...');
+
+      await getLandmarker();
+
+      setIsReady(true);
+      setIsInitializing(false);
+      console.log('✅ MediaPipe ready for pose detection');
+    } catch (error) {
+      console.error('❌ Failed to initialize MediaPipe:', error);
+      setIsInitializing(false);
+      throw error;
+    }
+  }, [isReady, isInitializing]);
+
+  // Start detection (requires MediaPipe to be initialized first)
   const startDetection = useCallback(async (video, canvas) => {
+    if (!isReady) {
+      console.warn('⚠️ MediaPipe not ready yet, initializing...');
+      await initializeMediaPipe();
+    }
+
     try {
       console.log('🚀 Starting pose detection for video...');
       console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
@@ -164,14 +230,19 @@ export function usePoseDetection() {
       console.error('❌ Failed to start pose detection:', error);
       console.error('Error details:', error.message, error.stack);
     }
-  }, [runDetection]);
+  }, [runDetection, isReady, initializeMediaPipe]);
 
-  // Stop detection
+  // Stop detection (preserve angles when pausing)
   const stopDetection = useCallback(() => {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
+    // Don't reset angles - keep the last detected values visible
+  }, []);
+
+  // Clear angles (for cleanup/reset)
+  const clearAngles = useCallback(() => {
     setLeanAngle(null);
     setSlopeAngle(null);
   }, []);
@@ -180,13 +251,18 @@ export function usePoseDetection() {
   useEffect(() => {
     return () => {
       stopDetection();
+      clearAngles();
     };
-  }, [stopDetection]);
+  }, [stopDetection, clearAngles]);
 
   return {
+    initializeMediaPipe,
     startDetection,
     stopDetection,
+    clearAngles,
     leanAngle,
     slopeAngle,
+    isReady,
+    isInitializing,
   };
 }
