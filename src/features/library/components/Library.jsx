@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import VideoCard from './VideoCard';
 import { LoadingCard } from '../../../components';
 
@@ -12,6 +13,20 @@ const Library = ({ videos, onDeleteVideo }) => {
       // Sort by processingStartTime (most recent first)
       return (b.processingStartTime || 0) - (a.processingStartTime || 0);
     });
+
+  // Track which video is expanded (first one by default)
+  const [expandedVideoId, setExpandedVideoId] = useState(null);
+
+  // Always expand the most recent (first) video when it changes
+  useEffect(() => {
+    if (completedVideos.length > 0) {
+      const firstVideoId = completedVideos[0].id;
+      // If the first video is different from currently expanded, expand it
+      if (expandedVideoId !== firstVideoId) {
+        setExpandedVideoId(firstVideoId);
+      }
+    }
+  }, [completedVideos, expandedVideoId]);
 
   if (!videos || videos.length === 0) {
     return (
@@ -42,9 +57,15 @@ const Library = ({ videos, onDeleteVideo }) => {
           </p>
         </div>
 
-        <div className="grid gap-8">
+        <div className="grid gap-4">
           {completedVideos.map((video) => (
-            <VideoCard key={video.id} video={video} onDelete={onDeleteVideo} />
+            <VideoCard
+              key={video.id}
+              video={video}
+              isExpanded={expandedVideoId === video.id}
+              onToggle={() => setExpandedVideoId(video.id)}
+              onDelete={onDeleteVideo}
+            />
           ))}
         </div>
       </div>

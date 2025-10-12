@@ -16,8 +16,8 @@ export function useVideoUpload(onVideoAdded) {
         throw new Error(validationErrors.join(', '));
       }
 
-      // Process file
-      const videoItem = processVideoFile(file);
+      // Process file (now async due to metadata extraction)
+      const videoItem = await processVideoFile(file);
 
       // Call callback with new video item
       if (onVideoAdded) {

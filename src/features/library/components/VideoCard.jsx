@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PosePlayer from './PosePlayer';
 
-const VideoCard = ({ video, onDelete }) => {
+const VideoCard = ({ video, isExpanded, onToggle, onDelete }) => {
   const { metrics } = video;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+
+  // Reset details expansion when card collapses
+  useEffect(() => {
+    if (!isExpanded) {
+      setIsDetailsExpanded(false);
+    }
+  }, [isExpanded]);
 
   // If metrics are not available yet, don't render the card
   if (!metrics) {
@@ -16,6 +23,61 @@ const VideoCard = ({ video, onDelete }) => {
     }
   };
 
+  // Format duration (seconds to MM:SS)
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  // Collapsed tile view
+  if (!isExpanded) {
+    return (
+      <div
+        onClick={onToggle}
+        className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow flex items-center p-4 gap-4"
+      >
+        {/* Thumbnail */}
+        <img
+          src={video.thumbnail}
+          alt={video.name}
+          className="w-24 h-16 object-cover rounded flex-shrink-0"
+        />
+
+        {/* Video Info */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-gray-900 truncate">{video.name}</h3>
+          <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+            <span>{formatDate(video.uploadedAt)}</span>
+            <span>•</span>
+            <span>{formatDuration(video.duration)}</span>
+          </div>
+        </div>
+
+        {/* Expand Icon */}
+        <svg
+          className="w-6 h-6 text-gray-400 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Expanded full view
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       {/* Video Player */}
@@ -46,12 +108,12 @@ const VideoCard = ({ video, onDelete }) => {
         <div className="flex items-center justify-between gap-2">
           {/* Expand/Collapse Button */}
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
             className="flex-1 flex items-center justify-center py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
           >
             <span className="mr-2">Details</span>
             <svg
-              className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+              className={`w-5 h-5 transition-transform ${isDetailsExpanded ? 'rotate-180' : ''}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -84,7 +146,7 @@ const VideoCard = ({ video, onDelete }) => {
         </div>
 
         {/* Collapsible Feedback Section */}
-        {isExpanded && (
+        {isDetailsExpanded && (
           <div className="grid md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-gray-200">
             {/* Positive Points */}
             <div>
