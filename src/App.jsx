@@ -1,11 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Header } from './components';
 import { Upload, processVideoAnalysis } from './features/upload';
 import { Library } from './features/library';
+import { loadVideos, saveVideos, deleteVideo } from './shared/services/videoStorageService';
 
 function App() {
   const [activeTab, setActiveTab] = useState('upload');
   const [videos, setVideos] = useState([]);
+
+  // Load videos from IndexedDB on mount
+  useEffect(() => {
+    const loadStoredVideos = async () => {
+      const storedVideos = await loadVideos();
+      setVideos(storedVideos);
+    };
+    loadStoredVideos();
+  }, []);
+
+  // Save videos to IndexedDB whenever they change
+  useEffect(() => {
+    if (videos.length > 0) {
+      saveVideos(videos);
+    }
+  }, [videos]);
 
   const handleVideoAdded = useCallback((newVideo) => {
     // Add the video immediately (in processing state)
@@ -26,6 +43,13 @@ function App() {
     });
   }, []);
 
+  const handleDeleteVideo = useCallback(async (videoId) => {
+    // Remove from IndexedDB
+    await deleteVideo(videoId);
+    // Update state
+    setVideos((prevVideos) => prevVideos.filter((video) => video.id !== videoId));
+  }, []);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -41,7 +65,7 @@ function App() {
         {activeTab === 'upload' ? (
           <Upload onVideoAdded={handleVideoAdded} />
         ) : (
-          <Library videos={videos} />
+          <Library videos={videos} onDeleteVideo={handleDeleteVideo} />
         )}
       </main>
     </div>

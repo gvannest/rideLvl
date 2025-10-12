@@ -1,7 +1,18 @@
 import VideoCard from './VideoCard';
 import { LoadingCard } from '../../../components';
 
-const Library = ({ videos }) => {
+const Library = ({ videos, onDeleteVideo }) => {
+  // Find processing video (if any)
+  const processingVideo = videos.find((video) => video.isProcessing);
+
+  // Get completed videos sorted by most recent first
+  const completedVideos = videos
+    .filter((video) => !video.isProcessing)
+    .sort((a, b) => {
+      // Sort by processingStartTime (most recent first)
+      return (b.processingStartTime || 0) - (a.processingStartTime || 0);
+    });
+
   if (!videos || videos.length === 0) {
     return (
       <div className="max-w-4xl mx-auto mt-16 text-center">
@@ -20,30 +31,36 @@ const Library = ({ videos }) => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Video Library
-        </h1>
-        <p className="text-gray-600">
-          {videos.length} video{videos.length !== 1 ? 's' : ''} with pose analysis
-        </p>
+    <>
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Video Library
+          </h1>
+          <p className="text-gray-600">
+            {completedVideos.length} video{completedVideos.length !== 1 ? 's' : ''} with pose analysis
+          </p>
+        </div>
+
+        <div className="grid gap-8">
+          {completedVideos.map((video) => (
+            <VideoCard key={video.id} video={video} onDelete={onDeleteVideo} />
+          ))}
+        </div>
       </div>
 
-      <div className="grid gap-8">
-        {videos.map((video) => (
-          video.isProcessing ? (
+      {/* Processing Modal */}
+      {processingVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="max-w-lg w-full">
             <LoadingCard
-              key={video.id}
-              videoName={video.name}
-              startTime={video.processingStartTime}
+              videoName={processingVideo.name}
+              startTime={processingVideo.processingStartTime}
             />
-          ) : (
-            <VideoCard key={video.id} video={video} />
-          )
-        ))}
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

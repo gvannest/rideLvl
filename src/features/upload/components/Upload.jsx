@@ -88,28 +88,19 @@ const Upload = ({ onVideoAdded }) => {
           <div className="flex flex-col items-center">
             <div className="text-4xl mb-4">🎿</div>
 
-            {isUploading ? (
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-                <p className="text-gray-600">Processing video...</p>
-              </div>
-            ) : (
-              <>
-                <Button
-                  onClick={handleButtonClick}
-                  size="lg"
-                  className="mb-4"
-                >
-                  Select Video File
-                </Button>
-                <p className="text-sm text-gray-500">
-                  or drag and drop a video file here
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                  Supports MP4, WebM, MOV • Max file size: 100MB
-                </p>
-              </>
-            )}
+            <Button
+              onClick={handleButtonClick}
+              size="lg"
+              className="mb-4"
+            >
+              Select Video File
+            </Button>
+            <p className="text-sm text-gray-500">
+              or drag and drop a video file here
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              Supports MP4, WebM, MOV • Max file size: 100MB
+            </p>
           </div>
         </div>
 

@@ -1,5 +1,10 @@
 # React PoC Architecture Guide
 
+## Project-Specific Documentation
+
+For a comprehensive understanding of this specific application (RideLvl - Skiing Pose Analysis), please refer to:
+- **@APP_OVERVIEW.md** - Complete application overview, technical implementation details, and LLM-optimized documentation
+
 ## Overview
 
 This architecture is designed for small React applications serving as Proof of Concepts (PoCs). It prioritizes simplicity, maintainability, and ease of development over scalability. The goal is to achieve high cohesion and low coupling without unnecessary complexity or abstraction layers.
