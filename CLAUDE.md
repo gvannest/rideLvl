@@ -17,6 +17,7 @@ This architecture is designed for small React applications serving as Proof of C
 - **Standard React Patterns**: Leverage built-in React capabilities before adding external dependencies
 - **Colocation**: Keep related files close to where they're used
 - **Design System**: Use Shadcn UI components with Tailwind CSS for consistent, accessible design
+- **Build Tool**: Use Vite as the build tool and bundler for fast development and optimized production builds
 
 ## Folder Structure
 

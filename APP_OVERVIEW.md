@@ -7,7 +7,7 @@ Real-time skiing pose analysis application using MediaPipe AI for body posture t
 - **Frontend**: React 18.2
 - **AI/ML**: MediaPipe Tasks Vision 0.10.8 (Google's pose detection)
 - **Styling**: Tailwind CSS 3.3
-- **Build**: Create React App
+- **Build Tool**: Vite (fast build tool and bundler)
 
 ## Core Functionality
 
@@ -260,8 +260,9 @@ const [videos, setVideos] = useState([]);
 ## Development Commands
 
 ```bash
-npm start      # Development server (localhost:3000)
-npm build      # Production build
+npm run dev    # Development server with Vite
+npm run build  # Production build with Vite
+npm run preview # Preview production build locally
 npm test       # Run tests
 ```
 
@@ -307,7 +308,7 @@ POSE_LANDMARKS: {
 A React web app that analyzes skiing videos using Google's MediaPipe AI to detect body pose, calculate lean and slope angles, and overlay a color-coded skeleton on the video in real-time.
 
 **Main technologies?**
-React 18, MediaPipe Tasks Vision (pose detection), Tailwind CSS, HTML5 Canvas
+React 18, MediaPipe Tasks Vision (pose detection), Tailwind CSS, HTML5 Canvas, Vite (build tool)
 
 **How does it work?**
 User uploads video → MediaPipe detects 33 body landmarks per frame → Math calculates torso angles → Canvas draws skeleton overlay → Real-time angles displayed during playback

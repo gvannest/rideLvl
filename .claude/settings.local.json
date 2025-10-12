@@ -22,7 +22,10 @@
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_console_messages",
       "Bash(pkill:*)",
-      "Read(//Users/gautiervanneste/Documents/RideLvl/**)"
+      "Read(//Users/gautiervanneste/Documents/RideLvl/**)",
+      "Bash(npm audit:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

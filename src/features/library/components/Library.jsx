@@ -17,16 +17,17 @@ const Library = ({ videos, onDeleteVideo }) => {
   // Track which video is expanded (first one by default)
   const [expandedVideoId, setExpandedVideoId] = useState(null);
 
-  // Always expand the most recent (first) video when it changes
+  // Expand the first video when the list changes (new video added or videos loaded)
   useEffect(() => {
     if (completedVideos.length > 0) {
       const firstVideoId = completedVideos[0].id;
-      // If the first video is different from currently expanded, expand it
-      if (expandedVideoId !== firstVideoId) {
+      // Only auto-expand if nothing is expanded, or if the first video changed
+      if (!expandedVideoId || !completedVideos.find(v => v.id === expandedVideoId)) {
         setExpandedVideoId(firstVideoId);
       }
     }
-  }, [completedVideos, expandedVideoId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completedVideos.map(v => v.id).join(',')]);
 
   if (!videos || videos.length === 0) {
     return (
