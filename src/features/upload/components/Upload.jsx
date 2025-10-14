@@ -67,7 +67,7 @@ const Upload = ({ onVideoAdded }) => {
             relative border-2 border-dashed rounded-lg p-8 transition-colors
             ${dragActive
               ? 'border-bright-blue bg-sky-blue'
-              : 'border-night-blue hover:border-bright-blue'
+              : 'border-night-blue'
             }
             ${isUploading ? 'opacity-50 pointer-events-none' : ''}
           `}

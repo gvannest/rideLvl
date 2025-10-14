@@ -15,8 +15,8 @@ const Header = ({ activeTab, onTabChange }) => {
           <span>RideLVL</span>
         </div>
 
-        {/* Navigation */}
-        <nav className="ml-auto flex gap-6">
+        {/* Navigation - Hidden on mobile */}
+        <nav className="ml-auto hidden md:flex gap-6">
           {tabs.map((tab) => (
             <button
               key={tab.id}

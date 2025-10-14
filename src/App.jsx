@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Header } from './components';
+import { Header, MobileNav } from './components';
 import { Upload, processVideoAnalysis } from './features/upload';
 import { Library } from './features/library';
 import { loadVideos, saveVideos, deleteVideo } from './shared/services/videoStorageService';
@@ -61,13 +61,18 @@ function App() {
         onTabChange={handleTabChange}
       />
 
-      <main className="px-4 py-8">
+      <main className="px-4 py-8 pb-20 md:pb-8">
         {activeTab === 'upload' ? (
           <Upload onVideoAdded={handleVideoAdded} />
         ) : (
           <Library videos={videos} onDeleteVideo={handleDeleteVideo} />
         )}
       </main>
+
+      <MobileNav
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
     </div>
   );
 }
