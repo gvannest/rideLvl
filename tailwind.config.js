@@ -6,6 +6,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        // RideLvl brand colors
+        'bright-orange': '#FF7A06',
+        'bright-blue': '#0089D8',
+        'sky-blue': '#CAF0F8',
+        'night-blue': '#03045E',
+        'punchy-green': '#3ACC09',
         // Custom colors for the skiing theme
         snow: {
           50: '#fafafa',

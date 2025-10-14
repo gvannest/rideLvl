@@ -44,7 +44,7 @@ const LoadingCard = ({ videoName, startTime }) => {
         <div className="mb-6">
           <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-blue-500 to-blue-600 h-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-bright-blue to-bright-orange h-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -69,9 +69,9 @@ const LoadingCard = ({ videoName, startTime }) => {
                 <div
                   className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
                     isCompleted
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-punchy-green text-white'
                       : isActive
-                      ? 'bg-blue-500 text-white animate-pulse'
+                      ? 'bg-bright-blue text-white animate-pulse'
                       : 'bg-gray-200 text-gray-400'
                   }`}
                 >

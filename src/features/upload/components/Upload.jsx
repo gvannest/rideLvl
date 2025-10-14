@@ -54,7 +54,7 @@ const Upload = ({ onVideoAdded }) => {
   return (
     <div className="max-w-3xl mx-auto mt-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-night-blue mb-2">
           Upload Your Skiing Video
         </h1>
         <p className="text-gray-600 mb-8">
@@ -66,8 +66,8 @@ const Upload = ({ onVideoAdded }) => {
           className={`
             relative border-2 border-dashed rounded-lg p-8 transition-colors
             ${dragActive
-              ? 'border-blue-400 bg-blue-50'
-              : 'border-gray-300 hover:border-gray-400'
+              ? 'border-bright-blue bg-sky-blue'
+              : 'border-night-blue hover:border-bright-blue'
             }
             ${isUploading ? 'opacity-50 pointer-events-none' : ''}
           `}
